@@ -1,0 +1,27 @@
+dataset_name: bodmas
+
+embeddings_dir: data/bodmas/embeddings
+tabular_csv: data/bodmas/features.csv
+output_dir: outputs/bodmas
+
+input_dim: 512           # after XGBoost top-512 feature selection
+output_dim: 4096
+hidden_dim: 1024
+dropout: 0.1
+
+num_episodes: 4000
+support_size: 15
+query_size: 20
+episode_batch: 32
+
+lambda_query: 0.8
+kd_temperature: 1.0
+alpha: 0.7
+grad_clip: 1.0
+noise_std: 0.02
+
+lr: 1.0e-4
+weight_decay: 1.0e-2
+z_threshold: 1.5
+
+seed: 42

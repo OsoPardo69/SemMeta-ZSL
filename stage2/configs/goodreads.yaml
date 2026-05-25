@@ -1,0 +1,25 @@
+dataset_name: goodreads
+
+embeddings_dir: data/goodreads/embeddings
+tabular_csv: data/goodreads/features.csv
+output_dir: outputs/goodreads
+
+input_dim: null         # set after inspecting the dataset
+output_dim: 4096
+hidden_dim: 1024
+dropout: 0.1
+
+num_episodes: 8000
+support_size: 4
+query_size: 2
+episode_batch: 32
+
+lambda_query: 2.0
+kd_temperature: 3.0
+alpha: 0.7
+
+lr: 1.0e-4
+weight_decay: 1.0e-2
+z_threshold: 1.5
+
+seed: 42

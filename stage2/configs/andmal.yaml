@@ -1,0 +1,38 @@
+dataset_name: andmal
+
+# Paths produced by Stage 1
+embeddings_dir: data/andmal/embeddings
+
+# Tabular behavioral feature CSV (rows = samples, last column = label)
+tabular_csv: data/andmal/features.csv
+
+# Stage 2 output (trained student checkpoint)
+output_dir: outputs/andmal
+
+# Model architecture
+input_dim: 282          # number of tabular features
+output_dim: 4096        # LLM embedding dimension
+hidden_dim: 1024
+dropout: 0.1
+
+# Episodic meta-training
+num_episodes: 8000
+support_size: 13        # seen classes per episode
+query_size: 5           # proxy-unseen classes per episode
+episode_batch: 32       # samples per class per episode
+
+# Loss hyperparameters (best values from paper)
+lambda_query: 2.0       # weight on query generalization loss
+kd_temperature: 3.0     # distillation temperature T
+alpha: 0.7              # weight between KD loss and hard CE
+grad_clip: 1.0
+noise_std: 0.0          # Gaussian noise std added to tabular features (0 = disabled)
+
+# Optimizer
+lr: 1.0e-4
+weight_decay: 1.0e-2
+
+# Gating (Z-score threshold tuned on validation set)
+z_threshold: 1.5
+
+seed: 42

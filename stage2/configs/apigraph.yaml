@@ -1,0 +1,27 @@
+dataset_name: apigraph
+
+embeddings_dir: data/apigraph/embeddings
+tabular_csv: data/apigraph/features.csv
+output_dir: outputs/apigraph
+
+input_dim: 443          # after PCA reduction
+output_dim: 4096
+hidden_dim: 1024
+dropout: 0.1
+
+num_episodes: 1000
+support_size: 14
+query_size: 30
+episode_batch: 32
+
+lambda_query: 2.5
+kd_temperature: 4.0
+alpha: 0.0
+grad_clip: 1.0
+noise_std: 0.01
+
+lr: 1.0e-3
+weight_decay: 1.0e-2
+z_threshold: 1.5
+
+seed: 42

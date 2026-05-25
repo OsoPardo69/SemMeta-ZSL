@@ -1,0 +1,15 @@
+dataset_name: bodmas
+
+cti_reports_path: data/bodmas/cti_reports.json
+
+adapter_dir: /path/to/llama3-8b_SupConDebias_bodmas
+
+output_dir: data/bodmas/embeddings
+
+unseen_classes:
+  - wacatac
+  - upatre
+  - dinwod
+  - mira
+
+test_size: 0.2
