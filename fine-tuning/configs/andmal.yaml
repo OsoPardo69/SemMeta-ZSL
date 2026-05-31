@@ -1,0 +1,22 @@
+dataset_name: andmal
+
+# Path to the CTI reports JSON file (list of {label, description} dicts)
+cti_reports_path: data/andmal/cti_reports.json
+
+# Path to the directory containing adapter_config.json and adapter weights
+adapter_dir: /path/to/llama3-8b_SupConDebias_andmal
+
+# Where to write train/test_seen/unseen .pkl and .npy files
+output_dir: data/andmal/embeddings/llama8b
+
+# Classes withheld as unseen during the whole Stage 1 pipeline
+unseen_classes:
+  - airpush
+  - kuguo
+  - lockscreen
+  - skymobi
+  - smsagent
+  - lotoor
+
+# Proportion of seen data used as test_seen split
+test_size: 0.2

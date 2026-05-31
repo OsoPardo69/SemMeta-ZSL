@@ -1,0 +1,14 @@
+dataset_name: fakeddit
+
+cti_reports_path: data/fakeddit/descriptions.json
+
+adapter_dir: /path/to/llama3-8b_SupConDebias_fakeddit
+
+output_dir: data/fakeddit/embeddings
+
+# 2 unseen classes out of 6 total
+unseen_classes:
+  - PLACEHOLDER_UNSEEN_1
+  - PLACEHOLDER_UNSEEN_2
+
+test_size: 0.2

@@ -1,0 +1,17 @@
+dataset_name: apigraph
+
+cti_reports_path: data/apigraph/cti_reports.json
+
+adapter_dir: /path/to/llama3-8b_SupConDebias_apigraph
+
+output_dir: data/apigraph/embeddings
+
+# 5 unseen classes out of 74 total
+unseen_classes:
+  - PLACEHOLDER_UNSEEN_1
+  - PLACEHOLDER_UNSEEN_2
+  - PLACEHOLDER_UNSEEN_3
+  - PLACEHOLDER_UNSEEN_4
+  - PLACEHOLDER_UNSEEN_5
+
+test_size: 0.2
