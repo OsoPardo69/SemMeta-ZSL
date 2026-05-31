@@ -9,6 +9,7 @@ Official implementation of **SMETA-ZSL**, a framework for generalized zero-shot 
 ## Overview
 
 Cyber defense systems struggle to recognize new threat families the moment they emerge, before labeled samples are available. SMETA-ZSL addresses this by using **Cyber Threat Intelligence (CTI) reports** — the natural language descriptions published by analysts — as the only supervision signal for unseen classes.
+<img width="1507" height="287" alt="Framework_Overview" src="https://github.com/user-attachments/assets/ed30749c-46b9-4752-a038-4763b9049483" />
 
 The framework has three components:
 
