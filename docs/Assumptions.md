@@ -1,8 +1,8 @@
-**Comparison of Zero-shot methods and their key qualifications.**
+## **Comparison of Zero-shot methods and their key qualifications.**
 
 | Method | Prototype Source | Unseen Signal | Data Preprocessing | Calibration | Tune Parameters | Key qualification |
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| **SMETA-ZSL /ou** | Yes<br>CTI Embeddings | No | Yes | Yes | 6 | Only method using *neither* unlabeled nor 1-shot unseen data |
+| **SMETA-ZSL /ours** | Yes<br>CTI Embeddings | No | Yes | Yes | 6 | Designed specifically for Open-set classification in the Cybersecurity Domain |
 | MZSL | Yes<br>Tabular Data | Unlabeled | Yes | Yes | 4 | Unseen attributes computed from unseen *test* samples (implicit transduction) |
 | FL-ZSL | Yes<br>CTI Embeddings | No | Yes | Yes | 2 | 3-client federated split |
 | TZSL | Yes<br>Tabular Data | Unlabeled | Yes | Yes | 0 | Explicit: unlabeled $X_{test}$ in VQ-VAE training |
