@@ -1,4 +1,4 @@
-**Table 7: Comparison of Zero-shot methods and their key qualifications.**
+**Comparison of Zero-shot methods and their key qualifications.**
 
 | Method | Prototype Source | Unseen Signal | Data Preprocessing | Calibration | Tune Parameters | Key qualification |
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
