@@ -1,0 +1,162 @@
+[
+    {
+        "description": "Adload is an adware/PUA bundler that monetizes systems by injecting advertisements and hijacking browser settings. Telemetry and A/B rules tune ad frequency, provider rotation, and click\u2011through funnels in real time. It inserts JavaScript into web sessions to trigger pop\u2011ups, redirects, and affiliate\u2011ID hijacking. IoCs include modified shortcut targets, rogue browser extensions, and frequent calls to advertising and tracking domains. Persistence relies on Scheduled Tasks and Run keys that relaunch helper components after reboot. Overall, the pattern aligns with Windows PUA/adware campaigns.",
+        "label": "Adload"
+    },
+    {
+        "description": "Adload is an adware/PUA bundler that monetizes systems by injecting advertisements and hijacking browser settings. Telemetry and A/B rules tune ad frequency, provider rotation, and click\u2011through funnels in real time. Persistence relies on Scheduled Tasks and Run keys that relaunch helper components after reboot. It inserts JavaScript into web sessions to trigger pop\u2011ups, redirects, and affiliate\u2011ID hijacking. IoCs include modified shortcut targets, rogue browser extensions, and frequent calls to advertising and tracking domains. Overall, the pattern aligns with Windows PUA/adware campaigns.",
+        "label": "Adload"
+    },
+    {
+        "description": "Adload is an adware/PUA bundler that monetizes systems by injecting advertisements and hijacking browser settings. Persistence relies on Scheduled Tasks and Run keys that relaunch helper components after reboot. Telemetry and A/B rules tune ad frequency, provider rotation, and click\u2011through funnels in real time. IoCs include modified shortcut targets, rogue browser extensions, and frequent calls to advertising and tracking domains. It inserts JavaScript into web sessions to trigger pop\u2011ups, redirects, and affiliate\u2011ID hijacking. Together, the indicators match bundlers and ad injectors at scale.",
+        "label": "Adload"
+    },
+    {
+        "description": "Adload is an adware/PUA bundler that monetizes systems by injecting advertisements and hijacking browser settings. Telemetry and A/B rules tune ad frequency, provider rotation, and click\u2011through funnels in real time. IoCs include modified shortcut targets, rogue browser extensions, and frequent calls to advertising and tracking domains. Installers chain additional offers and silently add extensions or BHOs that alter search providers and homepage values. It inserts JavaScript into web sessions to trigger pop\u2011ups, redirects, and affiliate\u2011ID hijacking. Overall, the pattern aligns with Windows PUA/adware campaigns.",
+        "label": "Adload"
+    },
+    {
+        "description": "Emotet operates as a modular botnet/loader with strong email\u2011centric distribution and rapid payload delivery. Process injection and service abuse establish durable footholds before handing off to second\u2011stage malware. C2 beacons use HTTPS with epoch\u2011based infrastructure and rotating RSA public keys for configs. Indicators include DGA/rotating hosts, compressed config blobs, and bursts of downloads preceding follow\u2011on payloads like Trickbot or Qakbot. Plugin modules support spam senders, web\u2011inject preparation, and lateral tooling delivery. Together, the signals match a resilient email\u2011driven botnet used to stage other threats.",
+        "label": "Emotet"
+    },
+    {
+        "description": "Emotet operates as a modular botnet/loader with strong email\u2011centric distribution and rapid payload delivery. Process injection and service abuse establish durable footholds before handing off to second\u2011stage malware. C2 beacons use HTTPS with epoch\u2011based infrastructure and rotating RSA public keys for configs. Indicators include DGA/rotating hosts, compressed config blobs, and bursts of downloads preceding follow\u2011on payloads like Trickbot or Qakbot. It hijacks Outlook threads, steals contacts, and sends reply\u2011chain spam to propagate new loaders. Overall, the traits align with modular loader ecosystems tied to spam operations.",
+        "label": "Emotet"
+    },
+    {
+        "description": "Emotet operates as a modular botnet/loader with strong email\u2011centric distribution and rapid payload delivery. C2 beacons use HTTPS with epoch\u2011based infrastructure and rotating RSA public keys for configs. Plugin modules support spam senders, web\u2011inject preparation, and lateral tooling delivery. It hijacks Outlook threads, steals contacts, and sends reply\u2011chain spam to propagate new loaders. Indicators include DGA/rotating hosts, compressed config blobs, and bursts of downloads preceding follow\u2011on payloads like Trickbot or Qakbot. Together, the signals match a resilient email\u2011driven botnet used to stage other threats.",
+        "label": "Emotet"
+    },
+    {
+        "description": "Emotet operates as a modular botnet/loader with strong email\u2011centric distribution and rapid payload delivery. It hijacks Outlook threads, steals contacts, and sends reply\u2011chain spam to propagate new loaders. C2 beacons use HTTPS with epoch\u2011based infrastructure and rotating RSA public keys for configs. Process injection and service abuse establish durable footholds before handing off to second\u2011stage malware. Plugin modules support spam senders, web\u2011inject preparation, and lateral tooling delivery. These behaviors define Emotet\u2019s role as a high\u2011volume loader platform.",
+        "label": "Emotet"
+    },
+    {
+        "description": "HarHar is a Windows backdoor/RAT that provides interactive control through lightweight HTTP command channels. It deploys PowerShell stagers and encoded scripts to fetch tasks and additional components. Capabilities include keylogging, screen capture, file management, and command execution on demand. C2 uses predictable paths and JSON tasking with periodic beacon intervals and sleep jitter. Exfiltrated data is base64\u2011encoded and chunked to blend with web traffic. These features typify commodity Windows RAT tooling.",
+        "label": "HarHar"
+    },
+    {
+        "description": "HarHar is a Windows backdoor/RAT that provides interactive control through lightweight HTTP command channels. C2 uses predictable paths and JSON tasking with periodic beacon intervals and sleep jitter. Capabilities include keylogging, screen capture, file management, and command execution on demand. It deploys PowerShell stagers and encoded scripts to fetch tasks and additional components. Persistence relies on Run keys and Scheduled Tasks; icons and windows are hidden to reduce user awareness. Together, the indicators point to a small but capable remote\u2011access implant.",
+        "label": "HarHar"
+    },
+    {
+        "description": "HarHar is a Windows backdoor/RAT that provides interactive control through lightweight HTTP command channels. It deploys PowerShell stagers and encoded scripts to fetch tasks and additional components. Capabilities include keylogging, screen capture, file management, and command execution on demand. Persistence relies on Run keys and Scheduled Tasks; icons and windows are hidden to reduce user awareness. C2 uses predictable paths and JSON tasking with periodic beacon intervals and sleep jitter. Together, the indicators point to a small but capable remote\u2011access implant.",
+        "label": "HarHar"
+    },
+    {
+        "description": "HarHar is a Windows backdoor/RAT that provides interactive control through lightweight HTTP command channels. Capabilities include keylogging, screen capture, file management, and command execution on demand. It deploys PowerShell stagers and encoded scripts to fetch tasks and additional components. Exfiltrated data is base64\u2011encoded and chunked to blend with web traffic. Persistence relies on Run keys and Scheduled Tasks; icons and windows are hidden to reduce user awareness. Together, the indicators point to a small but capable remote\u2011access implant.",
+        "label": "HarHar"
+    },
+    {
+        "description": "Lokibot is a credential stealer focused on harvesting stored passwords and tokens from Windows applications. Persistence is minimal, favoring quick smash\u2011and\u2011grab theft with basic Run keys when needed. Exfiltration uses HTTP POST with ZIP/JSON bundles labeled by host and user identifiers. Anti\u2011analysis checks delay or disable theft on virtualized sandboxes and researcher toolchains. It targets browser credential stores, autofill data, and cookies across Chrome, Edge, and Firefox profiles. These behaviors are diagnostic of commodity information stealers.",
+        "label": "Lokibot"
+    },
+    {
+        "description": "Lokibot is a credential stealer focused on harvesting stored passwords and tokens from Windows applications. It targets browser credential stores, autofill data, and cookies across Chrome, Edge, and Firefox profiles. Modules scrape email, FTP, and VPN clients and may grab cryptocurrency wallets and clipboard contents. Persistence is minimal, favoring quick smash\u2011and\u2011grab theft with basic Run keys when needed. Anti\u2011analysis checks delay or disable theft on virtualized sandboxes and researcher toolchains. These behaviors are diagnostic of commodity information stealers.",
+        "label": "Lokibot"
+    },
+    {
+        "description": "Lokibot is a credential stealer focused on harvesting stored passwords and tokens from Windows applications. It targets browser credential stores, autofill data, and cookies across Chrome, Edge, and Firefox profiles. Modules scrape email, FTP, and VPN clients and may grab cryptocurrency wallets and clipboard contents. Exfiltration uses HTTP POST with ZIP/JSON bundles labeled by host and user identifiers. Anti\u2011analysis checks delay or disable theft on virtualized sandboxes and researcher toolchains. These behaviors are diagnostic of commodity information stealers.",
+        "label": "Lokibot"
+    },
+    {
+        "description": "Lokibot is a credential stealer focused on harvesting stored passwords and tokens from Windows applications. Persistence is minimal, favoring quick smash\u2011and\u2011grab theft with basic Run keys when needed. Anti\u2011analysis checks delay or disable theft on virtualized sandboxes and researcher toolchains. Exfiltration uses HTTP POST with ZIP/JSON bundles labeled by host and user identifiers. It targets browser credential stores, autofill data, and cookies across Chrome, Edge, and Firefox profiles. These behaviors are diagnostic of commodity information stealers.",
+        "label": "Lokibot"
+    },
+    {
+        "description": "njRAT is a classic remote\u2011access trojan that grants operators full control of infected Windows hosts. Process injection and mutex naming help isolate concurrent sessions across victims. It supports live keylogging, screen capture, remote shell, file transfer, and process management. Optional plugins extend webcam capture and credential theft and can spread via removable drives. Persistence relies on Run keys and Scheduled Tasks while icons and windows are hidden for stealth. Together, the signals match Windows backdoor activity with live tasking.",
+        "label": "njRAT"
+    },
+    {
+        "description": "njRAT is a classic remote\u2011access trojan that grants operators full control of infected Windows hosts. Persistence relies on Run keys and Scheduled Tasks while icons and windows are hidden for stealth. It supports live keylogging, screen capture, remote shell, file transfer, and process management. Process injection and mutex naming help isolate concurrent sessions across victims. Optional plugins extend webcam capture and credential theft and can spread via removable drives. Together, the signals match Windows backdoor activity with live tasking.",
+        "label": "njRAT"
+    },
+    {
+        "description": "njRAT is a classic remote\u2011access trojan that grants operators full control of infected Windows hosts. Dynamic\u2011DNS domains and simple HTTP/TCP protocols carry command tasking and heartbeats. Process injection and mutex naming help isolate concurrent sessions across victims. It supports live keylogging, screen capture, remote shell, file transfer, and process management. Persistence relies on Run keys and Scheduled Tasks while icons and windows are hidden for stealth. Overall, the flow reflects interactive operator control rather than one\u2011shot data theft.",
+        "label": "njRAT"
+    },
+    {
+        "description": "njRAT is a classic remote\u2011access trojan that grants operators full control of infected Windows hosts. Persistence relies on Run keys and Scheduled Tasks while icons and windows are hidden for stealth. Dynamic\u2011DNS domains and simple HTTP/TCP protocols carry command tasking and heartbeats. Process injection and mutex naming help isolate concurrent sessions across victims. It supports live keylogging, screen capture, remote shell, file transfer, and process management. Overall, the flow reflects interactive operator control rather than one\u2011shot data theft.",
+        "label": "njRAT"
+    },
+    {
+        "description": "Qakbot is a banking/loader malware that combines credential theft with modular payload delivery. Second\u2011stage delivery installs tools like Cobalt\u2011Strike\u2011style beacons or ransomware partners. C2 relies on encrypted web APIs, peer lists, and rotating configs that steer modules and targets. Indicators include process hollowing, scheduled tasks for updates, and structured JSON posts to /inject or /grab endpoints. It injects into long\u2011lived processes and hooks browsers to perform web\u2011injects and form\u2011grabbing. Overall, the profile matches modern banking malware ecosystems.",
+        "label": "Qakbot"
+    },
+    {
+        "description": "Qakbot is a banking/loader malware that combines credential theft with modular payload delivery. It injects into long\u2011lived processes and hooks browsers to perform web\u2011injects and form\u2011grabbing. Outlook data theft enables reply\u2011chain phishing and lateral spread within organizations. Indicators include process hollowing, scheduled tasks for updates, and structured JSON posts to /inject or /grab endpoints. Second\u2011stage delivery installs tools like Cobalt\u2011Strike\u2011style beacons or ransomware partners. These traits characterize Qakbot\u2019s dual role as stealer and loader.",
+        "label": "Qakbot"
+    },
+    {
+        "description": "Qakbot is a banking/loader malware that combines credential theft with modular payload delivery. Second\u2011stage delivery installs tools like Cobalt\u2011Strike\u2011style beacons or ransomware partners. Outlook data theft enables reply\u2011chain phishing and lateral spread within organizations. C2 relies on encrypted web APIs, peer lists, and rotating configs that steer modules and targets. Indicators include process hollowing, scheduled tasks for updates, and structured JSON posts to /inject or /grab endpoints. Overall, the profile matches modern banking malware ecosystems.",
+        "label": "Qakbot"
+    },
+    {
+        "description": "Qakbot is a banking/loader malware that combines credential theft with modular payload delivery. C2 relies on encrypted web APIs, peer lists, and rotating configs that steer modules and targets. Second\u2011stage delivery installs tools like Cobalt\u2011Strike\u2011style beacons or ransomware partners. Outlook data theft enables reply\u2011chain phishing and lateral spread within organizations. Indicators include process hollowing, scheduled tasks for updates, and structured JSON posts to /inject or /grab endpoints. Overall, the profile matches modern banking malware ecosystems.",
+        "label": "Qakbot"
+    },
+    {
+        "description": "Swisyn acts as a simple Windows dropper/downloader that stages additional payloads on compromised hosts. IoCs include small first\u2011stage binaries, tight beacon\u2192GET timing, and quick follow\u2011up downloads. Artifacts are written to %AppData% or Temp with random names and executed via ShellExecute or rundll32. Run keys and minimal tasks provide just enough persistence to re\u2011fetch if removal occurs. Initial execution contacts hard\u2011coded URLs or small configs to retrieve payload locations. These patterns are canonical for first\u2011stage droppers like Swisyn.",
+        "label": "Swisyn"
+    },
+    {
+        "description": "Swisyn acts as a simple Windows dropper/downloader that stages additional payloads on compromised hosts. Basic anti\u2011VM checks and delayed starts attempt to bypass automated sandboxes. Initial execution contacts hard\u2011coded URLs or small configs to retrieve payload locations. Artifacts are written to %AppData% or Temp with random names and executed via ShellExecute or rundll32. IoCs include small first\u2011stage binaries, tight beacon\u2192GET timing, and quick follow\u2011up downloads. Overall, the behavior aligns with modular infection chains.",
+        "label": "Swisyn"
+    },
+    {
+        "description": "Swisyn acts as a simple Windows dropper/downloader that stages additional payloads on compromised hosts. IoCs include small first\u2011stage binaries, tight beacon\u2192GET timing, and quick follow\u2011up downloads. Initial execution contacts hard\u2011coded URLs or small configs to retrieve payload locations. Artifacts are written to %AppData% or Temp with random names and executed via ShellExecute or rundll32. Basic anti\u2011VM checks and delayed starts attempt to bypass automated sandboxes. Overall, the behavior aligns with modular infection chains.",
+        "label": "Swisyn"
+    },
+    {
+        "description": "Swisyn acts as a simple Windows dropper/downloader that stages additional payloads on compromised hosts. IoCs include small first\u2011stage binaries, tight beacon\u2192GET timing, and quick follow\u2011up downloads. Run keys and minimal tasks provide just enough persistence to re\u2011fetch if removal occurs. Initial execution contacts hard\u2011coded URLs or small configs to retrieve payload locations. Basic anti\u2011VM checks and delayed starts attempt to bypass automated sandboxes. Together, they indicate staging rather than long\u2011term residence.",
+        "label": "Swisyn"
+    },
+    {
+        "description": "Trickbot is a modular banking trojan that evolved into a versatile platform for credential theft and lateral movement. Indicators include scheduled tasks, service entries, and encrypted config files for targeted banks. Injected modules hook browser processes to intercept sessions and alter web content for fraud. C2 distributes signed module updates via HTTPS with rotating configs and campaign IDs. Modules such as web\u2011injects and pwgrab harvest browser data, email creds, and network passwords. Overall, the indicators match large\u2011scale banking and loader tooling.",
+        "label": "Trickbot"
+    },
+    {
+        "description": "Trickbot is a modular banking trojan that evolved into a versatile platform for credential theft and lateral movement. Indicators include scheduled tasks, service entries, and encrypted config files for targeted banks. Share enumeration and worm\u2011like components probe SMB shares and domain resources for spread. Modules such as web\u2011injects and pwgrab harvest browser data, email creds, and network passwords. C2 distributes signed module updates via HTTPS with rotating configs and campaign IDs. Together, they map to credential theft paired with enterprise\u2011aware operations.",
+        "label": "Trickbot"
+    },
+    {
+        "description": "Trickbot is a modular banking trojan that evolved into a versatile platform for credential theft and lateral movement. Modules such as web\u2011injects and pwgrab harvest browser data, email creds, and network passwords. Injected modules hook browser processes to intercept sessions and alter web content for fraud. Indicators include scheduled tasks, service entries, and encrypted config files for targeted banks. Share enumeration and worm\u2011like components probe SMB shares and domain resources for spread. Overall, the indicators match large\u2011scale banking and loader tooling.",
+        "label": "Trickbot"
+    },
+    {
+        "description": "Trickbot is a modular banking trojan that evolved into a versatile platform for credential theft and lateral movement. Indicators include scheduled tasks, service entries, and encrypted config files for targeted banks. Injected modules hook browser processes to intercept sessions and alter web content for fraud. C2 distributes signed module updates via HTTPS with rotating configs and campaign IDs. Share enumeration and worm\u2011like components probe SMB shares and domain resources for spread. Together, they map to credential theft paired with enterprise\u2011aware operations.",
+        "label": "Trickbot"
+    },
+    {
+        "description": "Ursnif (Gozi/ISFB) is a banking information stealer with strong man\u2011in\u2011the\u2011browser capabilities. Backconnect/VNC components enable hands\u2011on fraud after credentials are obtained. Network egress consists of structured posts that include device and user identifiers. Persistence uses Run keys and scheduled tasks; configs rotate with campaign\u2011specific targets. Outlook and mail client harvesting collects address books and messages for follow\u2011on phishing. Together, they support interactive financial fraud at scale.",
+        "label": "Ursnif"
+    },
+    {
+        "description": "Ursnif (Gozi/ISFB) is a banking information stealer with strong man\u2011in\u2011the\u2011browser capabilities. It injects into browser processes to perform web\u2011injects, form\u2011grabbing, and session hijacking. Backconnect/VNC components enable hands\u2011on fraud after credentials are obtained. Outlook and mail client harvesting collects address books and messages for follow\u2011on phishing. Network egress consists of structured posts that include device and user identifiers. These features are classic for Ursnif/Gozi banking operations.",
+        "label": "Ursnif"
+    },
+    {
+        "description": "Ursnif (Gozi/ISFB) is a banking information stealer with strong man\u2011in\u2011the\u2011browser capabilities. Network egress consists of structured posts that include device and user identifiers. It injects into browser processes to perform web\u2011injects, form\u2011grabbing, and session hijacking. Persistence uses Run keys and scheduled tasks; configs rotate with campaign\u2011specific targets. Backconnect/VNC components enable hands\u2011on fraud after credentials are obtained. Together, they support interactive financial fraud at scale.",
+        "label": "Ursnif"
+    },
+    {
+        "description": "Ursnif (Gozi/ISFB) is a banking information stealer with strong man\u2011in\u2011the\u2011browser capabilities. Persistence uses Run keys and scheduled tasks; configs rotate with campaign\u2011specific targets. Outlook and mail client harvesting collects address books and messages for follow\u2011on phishing. Backconnect/VNC components enable hands\u2011on fraud after credentials are obtained. It injects into browser processes to perform web\u2011injects, form\u2011grabbing, and session hijacking. These features are classic for Ursnif/Gozi banking operations.",
+        "label": "Ursnif"
+    },
+    {
+        "description": "Zeus is a seminal banking trojan known for web\u2011injects, form\u2011grabbing, and robust botnet control. C2 uses HTTP with custom encryption and campaign tags; DGAs or fast\u2011flux may rotate infrastructure. Encrypted configuration files specify targeted financial sites, redirects, and inject rules. It hooks browser APIs to capture credentials and modifies pages to solicit additional secrets during logins. Keylogging and screenshot capture augment stolen form data and session cookies. Together, the traits match long\u2011lived financial botnets.",
+        "label": "Zeus"
+    },
+    {
+        "description": "Zeus is a seminal banking trojan known for web\u2011injects, form\u2011grabbing, and robust botnet control. It hooks browser APIs to capture credentials and modifies pages to solicit additional secrets during logins. Keylogging and screenshot capture augment stolen form data and session cookies. C2 uses HTTP with custom encryption and campaign tags; DGAs or fast\u2011flux may rotate infrastructure. Persistence relies on Run keys and service entries while injected processes hide the main payload. Overall, the behavior aligns with form\u2011grabbing and web\u2011inject driven fraud.",
+        "label": "Zeus"
+    },
+    {
+        "description": "Zeus is a seminal banking trojan known for web\u2011injects, form\u2011grabbing, and robust botnet control. Encrypted configuration files specify targeted financial sites, redirects, and inject rules. Keylogging and screenshot capture augment stolen form data and session cookies. C2 uses HTTP with custom encryption and campaign tags; DGAs or fast\u2011flux may rotate infrastructure. Persistence relies on Run keys and service entries while injected processes hide the main payload. These indicators define Zeus\u2011style banking malware.",
+        "label": "Zeus"
+    },
+    {
+        "description": "Zeus is a seminal banking trojan known for web\u2011injects, form\u2011grabbing, and robust botnet control. Persistence relies on Run keys and service entries while injected processes hide the main payload. It hooks browser APIs to capture credentials and modifies pages to solicit additional secrets during logins. C2 uses HTTP with custom encryption and campaign tags; DGAs or fast\u2011flux may rotate infrastructure. Keylogging and screenshot capture augment stolen form data and session cookies. These indicators define Zeus\u2011style banking malware.",
+        "label": "Zeus"
+    }
+]
