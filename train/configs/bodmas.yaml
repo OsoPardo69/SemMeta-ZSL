@@ -1,6 +1,6 @@
 dataset_name: bodmas
 
-embeddings_dir: data/bodmas/embeddings
+embeddings_dir: data/bodmas/embeddings/llama8b
 tabular_csv: data/bodmas/features.csv
 output_dir: outputs/bodmas
 

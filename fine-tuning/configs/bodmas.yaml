@@ -7,7 +7,6 @@ adapter_dir: /path/to/llama3-8b_SupConDebias_bodmas
 output_dir: data/bodmas/embeddings/llama8b
 
 unseen_classes:
-  - wacatac
   - upatre
   - dinwod
   - mira

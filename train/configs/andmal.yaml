@@ -1,7 +1,7 @@
 dataset_name: andmal
 
 # Paths produced by Stage 1
-embeddings_dir: data/andmal/embeddings
+embeddings_dir: data/andmal/embeddings/llama8b
 
 # Tabular behavioral feature CSV (rows = samples, last column = label)
 tabular_csv: data/andmal/features.csv

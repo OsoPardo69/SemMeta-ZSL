@@ -9,7 +9,6 @@ Official implementation of **SMETA-ZSL**, a framework for generalized zero-shot 
 ## Overview
 
 Cyber defense systems struggle to recognize new threat families the moment they emerge, before labeled samples are available. SMETA-ZSL addresses this by using **Cyber Threat Intelligence (CTI) reports** — the natural language descriptions published by analysts — as the only supervision signal for unseen classes.
-<img width="1507" height="287" alt="Framework_Overview" src="https://github.com/user-attachments/assets/ed30749c-46b9-4752-a038-4763b9049483" />
 
 The framework has three components:
 
@@ -50,7 +49,8 @@ smeta-zsl/
 │   ├── dataset.py           # MalwareTabularDataset
 │   └── utils.py             # Shared data loading utilities
 │
-├── stage1/                  # LLM fine-tuning & embedding generation
+├── fine-tuning/             # Stage 1 — LLM fine-tuning & embedding generation
+│   ├── train_supcon_debias_AndMAL.py
 │   ├── generate_embeddings.py
 │   ├── evaluate_embeddings.py
 │   └── configs/             # Per-dataset YAML configs
@@ -62,16 +62,40 @@ smeta-zsl/
 │       ├── petfinder.yaml
 │       └── fakeddit.yaml
 │
-├── stage2/                  # Meta-alignment training & evaluation
+├── train/                   # Stage 2 — Meta-alignment training & evaluation
 │   ├── train.py
 │   ├── evaluate.py
 │   └── configs/             # Per-dataset YAML configs (same structure)
 │
 ├── baselines/               # All baseline implementations
-├── data/                    # Dataset placeholder (see data/README.md)
+│
+├── data/                    # Pre-computed embeddings and CTI reports
+│   ├── andmal/
+│   │   ├── cti_reports.json
+│   │   └── embeddings/
+│   │       ├── llama8b/     # canonical (LLaMA-3.1-8B, used in paper)
+│   │       ├── llama3b/
+│   │       ├── gemma/
+│   │       ├── qwen/
+│   │       ├── qwen_coder/
+│   │       └── mistral/
+│   ├── bodmas/              # same per-model structure as andmal/
+│   ├── apigraph/
+│   │   ├── cti_reports.json
+│   │   └── embeddings/      # LLaMA-3.1-8B embeddings
+│   ├── avast/
+│   ├── goodreads/
+│   ├── petfinder/
+│   └── fakeddit/
+│
+├── run.py                   # Single-command train + evaluate entry point
 ├── requirements.txt
 └── setup.py
 ```
+
+Each `embeddings/` directory contains:
+- `train_embeddings.npy`, `test_seen_embeddings.npy`, `unseen_embeddings.npy`
+- `train_data.pkl`, `test_seen_data.pkl`, `unseen_data.pkl`, `unseen_classes.pkl`
 
 ---
 
@@ -83,68 +107,95 @@ cd smeta-zsl
 pip install -e .
 ```
 
-Requirements: Python ≥ 3.10, PyTorch ≥ 2.1, a CUDA-capable GPU with ≥ 24 GB VRAM for Stage 1 (LLM inference). Stage 2 runs on a single GPU with ≥ 8 GB VRAM.
+Requirements: Python ≥ 3.10, PyTorch ≥ 2.1. Stage 1 (LLM fine-tuning) requires a CUDA GPU with ≥ 24 GB VRAM. Stage 2 runs on a single GPU with ≥ 8 GB VRAM.
 
 ---
 
-## Data Setup
+## Quick Start
 
-Place dataset files under `data/` following the structure described in [data/README.md](data/README.md). Each dataset requires:
-- A CTI reports JSON file: `[{label, description}, ...]`
-- A tabular feature CSV: rows are samples, last column is the class label
-
-Dataset download links are listed in [data/README.md](data/README.md).
-
----
-
-## Usage
-
-### Stage 1 — Generate LLM Embeddings
-
-Fine-tune the LLM with the SupCon + isotropy objective (training script from the paper's training run), then generate embeddings for each dataset:
+### Train + Evaluate with a Single Command
 
 ```bash
-# Edit stage1/configs/andmal.yaml to set your paths and adapter checkpoint
-python stage1/generate_embeddings.py --config stage1/configs/andmal.yaml
+# Default model (llama3b) — available for all datasets
+python run.py --andmal
+python run.py --bodmas
+python run.py --apigraph
+
+# Select a specific embedding model
+python run.py --andmal --llama8b
+python run.py --bodmas --qwen
+python run.py --avast  --gemma
+
+# Multi-seed replication (5 seeds, reports mean ± std)
+python run.py --andmal --llama8b --runs 5
+
+# Fix a specific seed
+python run.py --bodmas --qwen --seed 123
+
+# Override the Z-score gate threshold
+python run.py --andmal --llama8b --z_threshold 2.0
 ```
 
-This writes `train_embeddings.npy`, `test_seen_embeddings.npy`, `unseen_embeddings.npy` and the corresponding `.pkl` metadata files to `data/andmal/embeddings/`.
+Available dataset flags: `--andmal`, `--bodmas`, `--apigraph`, `--avast`, `--goodreads`, `--petfinder`, `--fakeddit`
+
+Available model flags: `--llama3b` (default), `--llama8b`, `--gemma`, `--qwen`, `--qwen_coder`, `--mistral`
+
+---
+
+## Step-by-Step Usage
+
+### Stage 1 — Fine-tune the LLM and Generate Embeddings
+
+Fine-tune the LLM with the SupCon + isotropy objective:
+
+```bash
+# Edit fine-tuning/configs/andmal.yaml to set adapter_dir
+accelerate launch fine-tuning/train_supcon_debias_AndMAL.py --model llama8b
+```
+
+Then generate embeddings for each dataset:
+
+```bash
+python fine-tuning/generate_embeddings.py --config fine-tuning/configs/andmal.yaml
+```
+
+This writes `train_embeddings.npy`, `test_seen_embeddings.npy`, `unseen_embeddings.npy` and the corresponding `.pkl` metadata files to `data/andmal/embeddings/llama8b/`.
 
 Optionally evaluate embedding quality:
 
 ```bash
-python stage1/evaluate_embeddings.py --config stage1/configs/andmal.yaml
+python fine-tuning/evaluate_embeddings.py --config fine-tuning/configs/andmal.yaml
 ```
 
-### Stage 2 — Train the Student MLP
+### Stage 2 — Train the Student MLP (advanced)
 
 ```bash
-python stage2/train.py --config stage2/configs/andmal.yaml
+python train/train.py --config train/configs/andmal.yaml
 ```
 
 To replicate the paper's 5-seed evaluation:
 
 ```bash
-python stage2/train.py --config stage2/configs/andmal.yaml --runs 5
+python train/train.py --config train/configs/andmal.yaml --runs 5
 ```
 
-### Stage 2 — Evaluate
+### Stage 2 — Evaluate a Checkpoint
 
 ```bash
-python stage2/evaluate.py \
-    --config stage2/configs/andmal.yaml \
+python train/evaluate.py \
+    --config train/configs/andmal.yaml \
     --checkpoint outputs/andmal/student_mlp_seed42.pt
 
-# Sweep Z-score thresholds to find the optimal value
-python stage2/evaluate.py \
-    --config stage2/configs/andmal.yaml \
+# Sweep Z-score thresholds
+python train/evaluate.py \
+    --config train/configs/andmal.yaml \
     --checkpoint outputs/andmal/student_mlp_seed42.pt \
     --sweep_z
 ```
 
 ### Baselines
 
-Each baseline in `baselines/` can be run independently. See comments at the top of each file for usage. To run all baselines on a dataset:
+Each baseline in `baselines/` can be run independently. To run all baselines on a dataset:
 
 ```bash
 python baselines/run_all.py
@@ -152,9 +203,15 @@ python baselines/run_all.py
 
 ---
 
+## Pre-computed Semantic Prototypes
+
+To avoid non-determinism from LLM generation, we release the fixed `.npy` prototype files used in the paper. Download them from the [anonymous repository](https://anonymous.4open.science/r/SemMeta-ZSL-BE16/) and place them under `data/<dataset>/embeddings/llama8b/`.
+
+---
+
 ## Hyperparameters
 
-All hyperparameters are stored in the per-dataset YAML configs under `stage2/configs/`. Key values from the paper:
+All hyperparameters are stored in the per-dataset YAML configs under `train/configs/`. Key values from the paper:
 
 | Dataset | Support | Query | Episodes | λ_qry | T_KD | α |
 |---|---|---|---|---|---|---|

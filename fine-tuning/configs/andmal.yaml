@@ -12,9 +12,7 @@ output_dir: data/andmal/embeddings/llama8b
 # Classes withheld as unseen during the whole Stage 1 pipeline
 unseen_classes:
   - airpush
-  - kuguo
   - lockscreen
-  - skymobi
   - smsagent
   - lotoor
 

@@ -91,12 +91,19 @@ def main():
 
     text_prototypes = build_prototypes(all_emb, all_meta)
 
-    (X_train, y_train, X_val, y_val, X_unseen, y_unseen, scaler, input_dim) = prepare_tabular(
-        tab_csv, seen_families, unseen_families, text_prototypes, seed=seed
+    unseen_cal_size = cfg.get("unseen_cal_size", 0.4)
+    (X_train, y_train,
+     X_val, y_val,
+     X_unseen_cal, y_unseen_cal,
+     X_unseen_test, y_unseen_test,
+     scaler, input_dim) = prepare_tabular(
+        tab_csv, seen_families, unseen_families, text_prototypes,
+        seed=seed, unseen_cal_size=unseen_cal_size,
     )
 
-    val_loader = DataLoader(MalwareTabularDataset(X_val, y_val, text_prototypes), batch_size=256)
-    unseen_loader = DataLoader(MalwareTabularDataset(X_unseen, y_unseen, text_prototypes), batch_size=256)
+    val_loader         = DataLoader(MalwareTabularDataset(X_val,         y_val,         text_prototypes), batch_size=256)
+    unseen_cal_loader  = DataLoader(MalwareTabularDataset(X_unseen_cal,  y_unseen_cal,  text_prototypes), batch_size=256)
+    unseen_test_loader = DataLoader(MalwareTabularDataset(X_unseen_test, y_unseen_test, text_prototypes), batch_size=256)
 
     all_proto_labels = list(text_prototypes.keys())
     all_protos = torch.stack([
@@ -114,39 +121,56 @@ def main():
     model.load_state_dict(ckpt["model_state"])
     model.eval()
 
-    z_thresh = args.z_threshold if args.z_threshold is not None else cfg.get("z_threshold", 1.5)
+    _Z_CANDIDATES = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0]
+
+    if args.z_threshold is not None:
+        # Manual override: skip calibration
+        z_thresh = args.z_threshold
+        print(f"Z-threshold: {z_thresh} (manual override)")
+    else:
+        # Calibrate on the held-out unseen calibration split
+        best_h, z_thresh = -1.0, _Z_CANDIDATES[0]
+        for z in _Z_CANDIDATES:
+            s_p, s_t = zscore_gated_predict(model, val_loader, all_protos, all_proto_labels,
+                                            seen_families, unseen_families, device, z)
+            u_p, u_t = zscore_gated_predict(model, unseen_cal_loader, all_protos, all_proto_labels,
+                                            seen_families, unseen_families, device, z)
+            h_cal = harmonic_mean(accuracy(s_p, s_t), accuracy(u_p, u_t))
+            if h_cal > best_h:
+                best_h, z_thresh = h_cal, z
+        print(f"Z-threshold: {z_thresh} (calibrated on unseen-cal, H={best_h*100:.2f}%)")
 
     if args.sweep_z:
-        print(f"\n{'Z-Threshold':<14} | {'Seen Acc':<10} | {'Unseen Acc':<12} | {'H-Mean':<10}")
-        print("-" * 52)
-        for z in [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0]:
-            s_preds, s_targets = zscore_gated_predict(model, val_loader, all_protos, all_proto_labels,
-                                                       seen_families, unseen_families, device, z)
-            u_preds, u_targets = zscore_gated_predict(model, unseen_loader, all_protos, all_proto_labels,
-                                                       seen_families, unseen_families, device, z)
-            s = accuracy(s_preds, s_targets)
-            u = accuracy(u_preds, u_targets)
+        print(f"\n{'Z-Threshold':<14} | {'Seen Acc':<10} | {'Unseen-test Acc':<17} | {'H-Mean':<10} | Set")
+        print("-" * 62)
+        for z in _Z_CANDIDATES:
+            s_p, s_t = zscore_gated_predict(model, val_loader, all_protos, all_proto_labels,
+                                            seen_families, unseen_families, device, z)
+            u_p, u_t = zscore_gated_predict(model, unseen_test_loader, all_protos, all_proto_labels,
+                                            seen_families, unseen_families, device, z)
+            s = accuracy(s_p, s_t)
+            u = accuracy(u_p, u_t)
             h = harmonic_mean(s, u)
             marker = " <--" if abs(z - z_thresh) < 1e-4 else ""
-            print(f"{z:<14.1f} | {s*100:<10.2f} | {u*100:<12.2f} | {h*100:<10.2f}{marker}")
+            print(f"{z:<14.1f} | {s*100:<10.2f} | {u*100:<17.2f} | {h*100:<10.2f}{marker}")
         print()
 
-    # Final evaluation at chosen threshold
+    # Final evaluation on the held-out unseen test split
     s_preds, s_targets = zscore_gated_predict(model, val_loader, all_protos, all_proto_labels,
                                                seen_families, unseen_families, device, z_thresh)
-    u_preds, u_targets = zscore_gated_predict(model, unseen_loader, all_protos, all_proto_labels,
+    u_preds, u_targets = zscore_gated_predict(model, unseen_test_loader, all_protos, all_proto_labels,
                                                seen_families, unseen_families, device, z_thresh)
 
     s_acc = accuracy(s_preds, s_targets)
     u_acc = accuracy(u_preds, u_targets)
     h = harmonic_mean(s_acc, u_acc)
 
-    print(f"=== {dataset_name} (Z-threshold = {z_thresh}) ===")
+    print(f"=== {dataset_name} (Z-threshold = {z_thresh}, calibrated on unseen-cal) ===")
     print(f"  Seen Acc  (S): {s_acc*100:.2f}%")
     print(f"  Unseen Acc(U): {u_acc*100:.2f}%")
     print(f"  H-Mean    (H): {h*100:.2f}%")
     print()
-    print("Unseen class breakdown:")
+    print("Unseen-test class breakdown:")
     print(classification_report(u_targets, u_preds, labels=unseen_families, zero_division=0))
 
 

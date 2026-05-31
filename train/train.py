@@ -116,13 +116,16 @@ def train(cfg: dict, seed: int):
     text_prototypes = build_prototypes(all_emb, all_meta)
 
     # Prepare tabular data
+    unseen_cal_size = cfg.get("unseen_cal_size", 0.4)
     (
         X_train, y_train,
         X_val, y_val,
-        X_unseen, y_unseen,
+        X_unseen_cal, y_unseen_cal,
+        X_unseen_test, y_unseen_test,
         scaler,
         input_dim,
-    ) = prepare_tabular(tab_csv, seen_families, unseen_families, text_prototypes, seed=seed)
+    ) = prepare_tabular(tab_csv, seen_families, unseen_families, text_prototypes,
+                        seed=seed, unseen_cal_size=unseen_cal_size)
 
     if cfg.get("input_dim") is not None:
         assert input_dim == cfg["input_dim"], (
@@ -131,16 +134,19 @@ def train(cfg: dict, seed: int):
     else:
         cfg["input_dim"] = input_dim
 
-    print(f"[{dataset_name}] Tabular features: {input_dim} | Train: {len(X_train)} | Val: {len(X_val)} | Unseen: {len(X_unseen)}")
+    print(f"[{dataset_name}] Tabular features: {input_dim} | Train: {len(X_train)} | "
+          f"Val: {len(X_val)} | Unseen-cal: {len(X_unseen_cal)} | Unseen-test: {len(X_unseen_test)}")
 
     # DataLoaders for evaluation
-    train_dataset = MalwareTabularDataset(X_train, y_train, text_prototypes)
-    val_dataset = MalwareTabularDataset(X_val, y_val, text_prototypes)
-    unseen_dataset = MalwareTabularDataset(X_unseen, y_unseen, text_prototypes)
+    train_dataset       = MalwareTabularDataset(X_train,       y_train,       text_prototypes)
+    val_dataset         = MalwareTabularDataset(X_val,         y_val,         text_prototypes)
+    unseen_cal_dataset  = MalwareTabularDataset(X_unseen_cal,  y_unseen_cal,  text_prototypes)
+    unseen_test_dataset = MalwareTabularDataset(X_unseen_test, y_unseen_test, text_prototypes)
 
-    train_loader = DataLoader(train_dataset, batch_size=256, shuffle=True, drop_last=True)
-    val_loader = DataLoader(val_dataset, batch_size=256, shuffle=False)
-    unseen_loader = DataLoader(unseen_dataset, batch_size=256, shuffle=False)
+    train_loader       = DataLoader(train_dataset,       batch_size=256, shuffle=True, drop_last=True)
+    val_loader         = DataLoader(val_dataset,         batch_size=256, shuffle=False)
+    unseen_cal_loader  = DataLoader(unseen_cal_dataset,  batch_size=256, shuffle=False)
+    unseen_test_loader = DataLoader(unseen_test_dataset, batch_size=256, shuffle=False)
 
     # Build all-class prototype tensor for evaluation
     all_proto_labels = list(text_prototypes.keys())
@@ -220,7 +226,11 @@ def train(cfg: dict, seed: int):
     torch.save({"model_state": best_state, "config": cfg, "seed": seed}, ckpt_path)
     print(f"\n[{dataset_name}] Best model saved to {ckpt_path}")
 
-    return model, all_protos, all_proto_labels, seen_families, unseen_families, val_loader, unseen_loader
+    return (
+        model, all_protos, all_proto_labels,
+        seen_families, unseen_families,
+        val_loader, unseen_cal_loader, unseen_test_loader,
+    )
 
 
 # ── Quick evaluation after training ──────────────────────────────────────────
@@ -247,6 +257,27 @@ def zscore_gated_eval(model, loader, all_protos, all_proto_labels, seen_families
     return correct / len(targets) if targets else 0.0
 
 
+_Z_CANDIDATES = (0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0)
+
+
+def calibrate_z_threshold(
+    model, val_loader, unseen_cal_loader,
+    all_protos, all_proto_labels, seen_families, unseen_families, device,
+    candidates=_Z_CANDIDATES,
+):
+    """Pick the Z-score threshold that maximises H on seen-val + unseen-cal splits."""
+    best_h, best_z = -1.0, candidates[0]
+    for z in candidates:
+        s = zscore_gated_eval(model, val_loader, all_protos, all_proto_labels,
+                              seen_families, unseen_families, device, z)
+        u = zscore_gated_eval(model, unseen_cal_loader, all_protos, all_proto_labels,
+                              seen_families, unseen_families, device, z)
+        h = (2 * s * u) / (s + u) if (s + u) > 0 else 0.0
+        if h > best_h:
+            best_h, best_z = h, z
+    return best_z
+
+
 def main():
     parser = argparse.ArgumentParser(description="SMETA-ZSL Stage 2 Training")
     parser.add_argument("--config", required=True)
@@ -265,14 +296,21 @@ def main():
     results = []
 
     for seed in seeds:
-        model, all_protos, all_proto_labels, seen_fam, unseen_fam, val_loader, unseen_loader = train(cfg.copy(), seed)
+        (model, all_protos, all_proto_labels,
+         seen_fam, unseen_fam,
+         val_loader, unseen_cal_loader, unseen_test_loader) = train(cfg.copy(), seed)
 
-        z_thresh = cfg.get("z_threshold", 1.5)
-        s_acc = zscore_gated_eval(model, val_loader, all_protos, all_proto_labels, seen_fam, unseen_fam, device, z_thresh)
-        u_acc = zscore_gated_eval(model, unseen_loader, all_protos, all_proto_labels, seen_fam, unseen_fam, device, z_thresh)
+        z_thresh = calibrate_z_threshold(
+            model, val_loader, unseen_cal_loader,
+            all_protos, all_proto_labels, seen_fam, unseen_fam, device,
+        )
+        print(f"[{cfg['dataset_name']}] Calibrated Z-threshold: {z_thresh}")
+
+        s_acc = zscore_gated_eval(model, val_loader,         all_protos, all_proto_labels, seen_fam, unseen_fam, device, z_thresh)
+        u_acc = zscore_gated_eval(model, unseen_test_loader, all_protos, all_proto_labels, seen_fam, unseen_fam, device, z_thresh)
         h = (2 * s_acc * u_acc) / (s_acc + u_acc) if (s_acc + u_acc) > 0 else 0.0
         results.append({"seed": seed, "seen": s_acc, "unseen": u_acc, "h_mean": h})
-        print(f"\n[{cfg['dataset_name']}] Seed {seed} — S: {s_acc*100:.2f}  U: {u_acc*100:.2f}  H: {h*100:.2f}")
+        print(f"[{cfg['dataset_name']}] Seed {seed} — S: {s_acc*100:.2f}  U: {u_acc*100:.2f}  H: {h*100:.2f}")
 
     if len(results) > 1:
         h_vals = [r["h_mean"] for r in results]

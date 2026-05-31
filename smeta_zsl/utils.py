@@ -34,14 +34,21 @@ def prepare_tabular(
     text_prototypes: dict,
     test_size: float = 0.2,
     seed: int = 42,
+    unseen_cal_size: float = 0.4,
 ):
     """
-    Loads the tabular CSV, splits seen data into train/val, standardizes features.
+    Loads the tabular CSV, splits seen data into train/val and unseen into cal/test.
 
     The tabular CSV must have features in all columns except the last, which is the label.
+    Unseen instances are split so that `unseen_cal_size` fraction is used to calibrate the
+    Z-score threshold and the remainder is held out as the final test set.
 
     Returns:
-        X_train, y_train, X_val, y_val, X_unseen, y_unseen, scaler, input_dim
+        X_train, y_train,
+        X_val, y_val,
+        X_unseen_cal, y_unseen_cal,
+        X_unseen_test, y_unseen_test,
+        scaler, input_dim
     """
     df = pd.read_csv(tab_csv)
     label_col = df.columns[-1]
@@ -60,15 +67,30 @@ def prepare_tabular(
         X_all, y_all, test_size=test_size, stratify=y_all, random_state=seed
     )
 
+    # Split unseen into calibration (threshold selection) and test (final evaluation).
+    X_uns = df_unseen[feature_cols].values
+    y_uns = df_unseen[label_col].values
+    try:
+        X_uns_cal, X_uns_test, y_uns_cal, y_uns_test = train_test_split(
+            X_uns, y_uns, train_size=unseen_cal_size, stratify=y_uns, random_state=seed
+        )
+    except ValueError:
+        # Fallback without stratify when class counts are too small
+        X_uns_cal, X_uns_test, y_uns_cal, y_uns_test = train_test_split(
+            X_uns, y_uns, train_size=unseen_cal_size, random_state=seed
+        )
+
     scaler = StandardScaler()
-    X_train_sc = scaler.fit_transform(X_train).astype(np.float32)
-    X_val_sc = scaler.transform(X_val).astype(np.float32)
-    X_unseen_sc = scaler.transform(df_unseen[feature_cols].values).astype(np.float32)
+    X_train_sc    = scaler.fit_transform(X_train).astype(np.float32)
+    X_val_sc      = scaler.transform(X_val).astype(np.float32)
+    X_uns_cal_sc  = scaler.transform(X_uns_cal).astype(np.float32)
+    X_uns_test_sc = scaler.transform(X_uns_test).astype(np.float32)
 
     return (
         X_train_sc, list(y_train),
         X_val_sc, list(y_val),
-        X_unseen_sc, list(df_unseen[label_col].values),
+        X_uns_cal_sc, list(y_uns_cal),
+        X_uns_test_sc, list(y_uns_test),
         scaler,
         len(feature_cols),
     )
